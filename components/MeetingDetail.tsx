@@ -38,37 +38,43 @@ export default function MeetingDetail({ meeting }: { meeting: SacramentMeeting }
         </div>
       </div>
 
-      {meeting.announcements && meeting.announcements.length > 0 && (
-        <section className="mt-6">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Announcements</h3>
-          <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-700 dark:text-slate-300">
-            {meeting.announcements.map((item, idx) => (
-              <li key={idx}>{item}</li>
+      {meeting.announcements?.length > 0 && (
+        <div className="py-2.5">
+          <span className="text-slate-500">Announcements</span>
+          <ul className="mt-1 list-inside list-disc pl-2 text-slate-800 dark:text-slate-200">
+            {meeting.announcements.map((announcement, idx) => (
+              <li key={idx}>{announcement}</li>
             ))}
           </ul>
-        </section>
+        </div>
       )}
 
       <div className="mt-6 divide-y divide-slate-100 border-y border-slate-100 text-sm dark:divide-slate-800 dark:border-slate-800">
         <div className="flex justify-between py-2.5">
           <span className="text-slate-500">Opening Hymn</span>
-          <span className="font-medium text-slate-900 dark:text-white">#{meeting.openingHymn.number} - {meeting.openingHymn.title}</span>
+          <span className="font-medium text-slate-900 dark:text-white">
+            {meeting.openingHymn?.number 
+              ? `#${meeting.openingHymn.number} - ${meeting.openingHymn.title}` 
+              : 'None / Stake Conference'
+            }</span>
         </div>
         <div className="flex justify-between py-2.5">
           <span className="text-slate-500">Invocation</span>
           <span className="font-medium text-slate-900 dark:text-white">{meeting.openingPrayer}</span>
         </div>
 
-        {meeting.wardBusiness.length > 0 && (
-          <div className="py-2.5">
-            <span className="text-slate-500">Ward Business</span>
-            <ul className="mt-1 list-inside list-disc pl-2 text-slate-800 dark:text-slate-200">
-              {meeting.wardBusiness.map((b, i) => (
-                <li key={i}>{b.description}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {meeting.wardBusiness?.length > 0 && (
+        <div className="py-2.5">
+          <span className="text-slate-500">Ward Business</span>
+          <ul className="mt-1 list-inside list-disc pl-2 text-slate-800 dark:text-slate-200">
+            {meeting.wardBusiness.map((item, idx) => (
+              <li key={idx}>
+                {typeof item === 'string' ? item : item.description}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
         {meeting.stakeBusiness && (
           <div className="flex justify-between py-2.5 text-amber-700 dark:text-amber-400">
@@ -77,14 +83,18 @@ export default function MeetingDetail({ meeting }: { meeting: SacramentMeeting }
           </div>
         )}
 
-        {meeting.sacramentHymn.number > 0 && (
+        {meeting.sacramentHymn?.number > 0 && (
           <div className="flex justify-between py-2.5">
             <span className="text-slate-500">Sacrament Hymn</span>
-            <span className="font-medium text-slate-900 dark:text-white">#{meeting.sacramentHymn.number} - {meeting.sacramentHymn.title}</span>
+            <span className="font-medium text-slate-900 dark:text-white">
+            {meeting.sacramentHymn?.number 
+              ? `#${meeting.sacramentHymn.number} - ${meeting.sacramentHymn.title}` 
+              : 'None'
+            }</span>
           </div>
         )}
 
-        {meeting.speakers.length > 0 && (
+        {meeting.speakers?.length > 0 && (
           <div className="py-3">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Speakers & Musical Numbers</span>
             <div className="mt-2 space-y-2">
@@ -102,7 +112,11 @@ export default function MeetingDetail({ meeting }: { meeting: SacramentMeeting }
 
         <div className="flex justify-between py-2.5">
           <span className="text-slate-500">Closing Hymn</span>
-          <span className="font-medium text-slate-900 dark:text-white">#{meeting.closingHymn.number} - {meeting.closingHymn.title}</span>
+          <span className="font-medium text-slate-900 dark:text-white">
+            {meeting.closingHymn?.number 
+              ? `#${meeting.closingHymn.number} - ${meeting.closingHymn.title}` 
+              : 'None'
+            }</span>
         </div>
         <div className="flex justify-between py-2.5">
           <span className="text-slate-500">Benediction</span>

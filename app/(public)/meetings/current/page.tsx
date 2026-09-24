@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
 import { getMeetings } from '@/lib/meetings-db';
 
+export const dynamic = 'force-dynamic';
+
 function getRecentSundayISO(): string {
   const today = new Date();
   const dayOfWeek = today.getDay(); // 0 is Sunday
@@ -14,16 +16,16 @@ function getRecentSundayISO(): string {
   return `${year}-${month}-${day}`;
 }
 
-export default function CurrentMeetingPage() {
+export default async function CurrentMeetingPage() {
   const recentSunday = getRecentSundayISO();
-  const matchedMeetings = getMeetings(recentSunday);
+  const matchedMeetings = await getMeetings(recentSunday);
 
   if (matchedMeetings.length > 0) {
     redirect(`/meetings/${matchedMeetings[0].id}`);
   }
 
   // Fallback: If no meeting matches the calculated Sunday, redirect to the first available meeting
-  const allMeetings = getMeetings();
+  const allMeetings = await getMeetings();
   if (allMeetings.length > 0) {
     redirect(`/meetings/${allMeetings[0].id}`);
   }
