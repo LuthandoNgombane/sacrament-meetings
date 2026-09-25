@@ -76,12 +76,12 @@ export default function MeetingDetail({ meeting }: { meeting: SacramentMeeting }
         </div>
       )}
 
-        {meeting.stakeBusiness && (
-          <div className="flex justify-between py-2.5 text-amber-700 dark:text-amber-400">
-            <span>Stake Business</span>
-            <span className="font-medium">Conducted by Stake Presidency</span>
-          </div>
-        )}
+      {meeting.stakeBusiness && (
+        <div className="flex justify-between py-2.5 text-amber-700 dark:text-amber-400">
+          <span>Stake Business</span>
+          <span className="font-medium">Conducted by Stake Presidency</span>
+        </div>
+      )}
 
         {meeting.sacramentHymn?.number > 0 && (
           <div className="flex justify-between py-2.5">
