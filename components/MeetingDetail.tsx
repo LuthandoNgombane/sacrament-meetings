@@ -38,7 +38,7 @@ export default function MeetingDetail({ meeting }: { meeting: SacramentMeeting }
         </div>
       </div>
 
-     {meeting.announcements && meeting.announcements.length > 0 && (
+     {meeting.announcements && meeting.announcements?.length > 0 && (
         <div className="py-2.5">
           <span className="text-slate-500">Announcements</span>
           <ul className="mt-1 list-inside list-disc pl-2 text-slate-800 dark:text-slate-200">
