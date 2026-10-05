@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { SacramentMeeting } from '@/lib/types';
+import DeleteMeetingButton from '@/components/DeleteMeetingButton';
 
 const badgeColors: Record<SacramentMeeting['meetingType'], string> = {
   regular: 'bg-emerald-100 text-emerald-800 border-emerald-300',
@@ -29,9 +30,13 @@ export default function MeetingCard({ meeting }: { meeting: SacramentMeeting }) 
       </div>
 
       <div className="mt-3 space-y-1 text-sm text-slate-600 dark:text-slate-300">
-        <p><strong className="text-slate-700 dark:text-slate-200">Presiding:</strong> {meeting.presiding}</p>
-        <p><strong className="text-slate-700 dark:text-slate-200">Conducting:</strong> {meeting.conducting}</p>
-        {meeting.speakers.length > 0 && (
+        <p>
+          <strong className="text-slate-700 dark:text-slate-200">Presiding:</strong> {meeting.presiding}
+        </p>
+        <p>
+          <strong className="text-slate-700 dark:text-slate-200">Conducting:</strong> {meeting.conducting}
+        </p>
+        {meeting.speakers && meeting.speakers.length > 0 && (
           <p className="truncate">
             <strong className="text-slate-700 dark:text-slate-200">Speakers:</strong>{' '}
             {meeting.speakers.map((s) => s.name).join(', ')}
@@ -39,7 +44,18 @@ export default function MeetingCard({ meeting }: { meeting: SacramentMeeting }) 
         )}
       </div>
 
-      <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-right">
+      {/* Action Footer: Left side has Edit & Delete, Right side has View */}
+      <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/meetings/${meeting.id}/edit`}
+            className="rounded border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            Edit
+          </Link>
+          <DeleteMeetingButton id={meeting.id} />
+        </div>
+
         <Link
           href={`/meetings/${meeting.id}`}
           className="text-sm font-semibold text-blue-600 hover:text-blue-800 dark:hover:text-blue-400"

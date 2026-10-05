@@ -1,4 +1,6 @@
+// app/(public)/meetings/page.tsx
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { getMeetings, getMeetingsTotalPages } from '@/lib/meetings-db';
 import { MeetingSearch } from '@/components/MeetingSearch';
 import MeetingCard from '@/components/MeetingCard';
@@ -20,7 +22,15 @@ export default async function MeetingsPage(props: {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Sacrament Meetings</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Sacrament Meetings</h1>
+        <Link
+          href="/meetings/new"
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition"
+        >
+          + New Meeting
+        </Link>
+      </div>
 
       <Suspense fallback={<div className="h-10 w-full bg-slate-100 animate-pulse mb-6" />}>
         <MeetingSearch />

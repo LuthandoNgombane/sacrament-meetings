@@ -15,6 +15,12 @@ export default function HomePage() {
           </p>
           <div className="flex gap-4 pt-2">
             <Link
+              href="/meetings/new"
+              className="rounded-md bg-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700 transition"
+            >
+              + New Meeting
+            </Link>
+            <Link
               href="/meetings/current"
               className="rounded-md bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
             >

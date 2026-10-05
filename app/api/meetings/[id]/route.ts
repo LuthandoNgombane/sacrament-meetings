@@ -12,7 +12,7 @@ export async function GET(
     return NextResponse.json({ message: 'Invalid meeting ID' }, { status: 400 });
   }
 
-  const meeting = getMeetingById(meetingId);
+  const meeting = await getMeetingById(meetingId);
 
   if (!meeting) {
     return NextResponse.json({ message: 'Meeting not found' }, { status: 404 });

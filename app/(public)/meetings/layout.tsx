@@ -13,6 +13,12 @@ export default function MeetingsLayout({
           <p className="text-xs text-slate-500">Agendas and Sunday service records</p>
         </div>
         <div className="flex gap-3 text-sm">
+           <Link
+            href="/meetings/new"
+            className="rounded-md border border-slate-300 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            + New Meeting
+          </Link>
           <Link
             href="/meetings"
             className="rounded-md border border-slate-300 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
