@@ -2,10 +2,23 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import MeetingCard from "@/components/MeetingCard";
-import { getApiUrl } from "@/lib/api-url";
-import type { SacramentMeeting } from "@/lib/types";
+import { MeetingSearch } from "@/components/MeetingSearch";
+import { Pagination } from "@/components/Pagination";
+import {
+  getMeetings,
+  getMeetingsTotalPages,
+} from "@/lib/meetings-db";
 
-export default function MeetingsPage() {
+interface MeetingsPageProps {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}
+
+export default function MeetingsPage({
+  searchParams,
+}: MeetingsPageProps) {
   return (
     <section className="space-y-6">
       <div>
@@ -26,34 +39,46 @@ export default function MeetingsPage() {
       </div>
 
       <Suspense fallback={<p role="status">Loading meetings…</p>}>
-        <MeetingsList />
+        <MeetingsList searchParams={searchParams} />
       </Suspense>
     </section>
   );
 }
 
-async function MeetingsList() {
+async function MeetingsList({
+  searchParams,
+}: MeetingsPageProps) {
   await connection();
 
-  const response = await fetch(getApiUrl("/api/meetings"), {
-    cache: "no-store",
-  });
+  const params = await searchParams;
+  const query = params?.query ?? "";
+  const requestedPage = Number(params?.page);
 
-  if (!response.ok) {
-    throw new Error("Unable to load meetings.");
-  }
+  const currentPage =
+    Number.isSafeInteger(requestedPage) && requestedPage > 0
+      ? requestedPage
+      : 1;
 
-  const meetings: SacramentMeeting[] = await response.json();
-
-  if (meetings.length === 0) {
-    return <p>No meetings are available.</p>;
-  }
+  const [meetings, totalPages] = await Promise.all([
+    getMeetings(query, currentPage),
+    getMeetingsTotalPages(query),
+  ]);
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {meetings.map((meeting) => (
-        <MeetingCard key={meeting.id} meeting={meeting} />
-      ))}
+    <div className="space-y-6">
+      <MeetingSearch />
+
+      {meetings.length === 0 ? (
+        <p>No meetings found.</p>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {meetings.map((meeting) => (
+            <MeetingCard key={meeting.id} meeting={meeting} />
+          ))}
+        </div>
+      )}
+
+      {totalPages > 0 && <Pagination totalPages={totalPages} />}
     </div>
   );
 }

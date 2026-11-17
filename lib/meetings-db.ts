@@ -3,7 +3,7 @@ import type { SacramentMeeting } from './types';
 
 const sql = neon(process.env.DATABASE_URL!);
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 4;
 
 export async function getMeetings(
   query: string = '',
@@ -75,23 +75,6 @@ export async function getMeetingById(
   return (rows[0] as unknown as SacramentMeeting) ?? null;
 }
 
-// Mutation stubs — will be wired to the database in Week 04
-export async function addMeeting(
-  data: Omit<SacramentMeeting, 'id'>
-): Promise<SacramentMeeting> {
-  throw new Error('addMeeting: database implementation coming in Week 04');
-}
-
-export async function updateMeeting(
-  id: number,
-  updates: Partial<SacramentMeeting>
-): Promise<SacramentMeeting | null> {
-  throw new Error('updateMeeting: database implementation coming in Week 04');
-}
-
-export async function deleteMeeting(id: number): Promise<boolean> {
-  throw new Error('deleteMeeting: database implementation coming in Week 04');
-}
 
 export async function getMeetingsByDate(
   date: string
@@ -107,4 +90,26 @@ export async function getMeetingsByDate(
   const meeting = await getMeetingById(Number(rows[0].id));
   return meeting ? [meeting] : [];
 }
+
+export async function addMeeting(
+  data: Omit<SacramentMeeting, "id">
+): Promise<SacramentMeeting> {
+  void data;
+  throw new Error("addMeeting: database implementation coming in Week 04");
+}
+
+export async function updateMeeting(
+  id: number,
+  updates: Partial<SacramentMeeting>
+): Promise<SacramentMeeting | null> {
+  void id;
+  void updates;
+  throw new Error("updateMeeting: database implementation coming in Week 04");
+}
+
+export async function deleteMeeting(id: number): Promise<boolean> {
+  void id;
+  throw new Error("deleteMeeting: database implementation coming in Week 04");
+}
+
 
