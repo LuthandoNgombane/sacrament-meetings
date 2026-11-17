@@ -1,155 +1,110 @@
+import { neon } from '@neondatabase/serverless';
 import type { SacramentMeeting } from './types';
 
-const meetings: SacramentMeeting[] = [
-  {
-    id: 1,
-    date: '2026-05-03',
-    meetingType: 'regular',
-    presiding: 'Bishop Smith',
-    conducting: 'Brother Jones',
-    openingHymn: { number: 2, title: 'The Spirit of God' },
-    openingPrayer: 'Sister Williams',
-    wardBusiness: [{ description: 'Sustaining of new Primary president' }],
-    stakeBusiness: false,
-    sacramentHymn: { number: 169, title: "In Remembrance of Thy Suffering" },
-    speakers: [
-      { name: 'Sister Brown', topic: 'Faith in Jesus Christ', type: 'speaker' },
-      { name: 'Youth Choir', topic: '', type: 'musical-number' }
-    ],
-    closingHymn: { number: 31, title: 'O God, Our Help in Ages Past' },
-    closingPrayer: 'Brother Davis',
-    announcements: ['Ward temple night: May 10']
-  },
-  // ... add remaining records
-{
-  id: 2,
-  date: '2026-11-08',
-  meetingType: 'regular',
-  presiding: 'Bishop Smith',
-  conducting: 'Brother Jones',
-  announcements: [
-    'Youth activity: May 13',
-    'Relief Society service project: May 16'
-  ],
-  openingHymn: { number: 3, title: 'Now Let Us Rejoice' },
-  openingPrayer: 'Brother Nelson',
-  wardBusiness: [],
-  stakeBusiness: false,
-  sacramentHymn: { number: 172, title: 'In Humility, Our Savior' },
-  speakers: [
-    {
-      name: 'Sister Dlamini',
-      topic: 'Serving others with love',
-      type: 'speaker'
-    },
-    {
-      name: 'Brother Mokoena',
-      topic: 'Following the example of Jesus Christ',
-      type: 'speaker'
-    }
-  ],
-  closingHymn: { number: 308, title: 'Love One Another' },
-  closingPrayer: 'Sister Naidoo'
-},
-{
-  id: 3,
-  date: '2026-05-17',
-  meetingType: 'regular',
-  presiding: 'Bishop Smith',
-  conducting: 'Brother Adams',
-  announcements: ['Ward family history workshop: May 23'],
-  openingHymn: { number: 19, title: 'We Thank Thee, O God, for a Prophet' },
-  openingPrayer: 'Sister Khumalo',
-  wardBusiness: [
-    { description: 'Sustaining of new Sunday School teachers' },
-    { description: 'Release of outgoing ward music leader with thanks' }
-  ],
-  stakeBusiness: true,
-  sacramentHymn: { number: 193, title: 'I Stand All Amazed' },
-  speakers: [
-    {
-      name: 'Brother Ngombane',
-      topic: 'Learning through scripture study',
-      type: 'speaker'
-    },
-    {
-      name: 'Ward Choir',
-      topic: 'Be Still, My Soul',
-      type: 'musical-number'
-    },
-    {
-      name: 'Sister Petersen',
-      topic: 'Recognizing personal revelation',
-      type: 'speaker'
-    }
-  ],
-  closingHymn: { number: 6, title: 'Redeemer of Israel' },
-  closingPrayer: 'Brother Botha'
-},
-{
-  id: 4,
-  date: '2026-05-24',
-  meetingType: 'regular',
-  presiding: 'Bishop Smith',
-  conducting: 'Brother Adams',
-  announcements: [],
-  openingHymn: { number: 21, title: 'Come, Listen to a Prophet’s Voice' },
-  openingPrayer: 'Brother Molefe',
-  wardBusiness: [],
-  stakeBusiness: false,
-  sacramentHymn: { number: 194, title: 'There Is a Green Hill Far Away' },
-  speakers: [
-    {
-      name: 'Sister Jacobs',
-      topic: 'The blessings of prayer',
-      type: 'speaker'
-    },
-    {
-      name: 'Brother Williams',
-      topic: 'Strengthening faith during difficult times',
-      type: 'speaker'
-    }
-  ],
-  closingHymn: { number: 301, title: 'I Am a Child of God' },
-  closingPrayer: 'Sister Maseko'
-},
-{
-  id: 5,
-  date: '2026-06-07',
-  meetingType: 'testimony',
-  presiding: 'Bishop Smith',
-  conducting: 'Brother Jones',
-  announcements: [
-    'Youth scripture study: June 10',
-    'Ward service activity: June 13'
-  ],
-  openingHymn: { number: 136, title: 'I Know That My Redeemer Lives' },
-  openingPrayer: 'Sister Brown',
-  wardBusiness: [],
-  stakeBusiness: false,
-  sacramentHymn: { number: 181, title: 'Jesus of Nazareth, Savior and King' },
-  speakers: [],
-  closingHymn: { number: 152, title: 'God Be with You Till We Meet Again' },
-  closingPrayer: 'Brother Dube'
+const sql = neon(process.env.DATABASE_URL!);
+
+const ITEMS_PER_PAGE = 5;
+
+export async function getMeetings(
+  query: string = '',
+  currentPage: number = 1
+): Promise<SacramentMeeting[]> {
+  const searchTerm = `%${query}%`;
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  const rows = await sql`
+    SELECT
+      id,
+      to_char(date, 'YYYY-MM-DD') AS "date",
+      meeting_type                AS "meetingType",
+      presiding, conducting, announcements,
+      opening_hymn                AS "openingHymn",
+      opening_prayer              AS "openingPrayer",
+      ward_business               AS "wardBusiness",
+      stake_business              AS "stakeBusiness",
+      sacrament_hymn              AS "sacramentHymn",
+      speakers,
+      closing_hymn                AS "closingHymn",
+      closing_prayer              AS "closingPrayer"
+    FROM meetings
+    WHERE
+      presiding     ILIKE ${searchTerm}
+      OR conducting ILIKE ${searchTerm}
+      OR meeting_type ILIKE ${searchTerm}
+      OR speakers::text ILIKE ${searchTerm}
+    ORDER BY date DESC
+    LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+  `;
+  return rows as unknown as SacramentMeeting[];
 }
 
-
-
-
-
-
-
-
-
-
-
-];
-
-export function getMeetings(date?: string | null): SacramentMeeting[] {
-  if (date) return meetings.filter(m => m.date === date);
-  return meetings;
+export async function getMeetingsTotalPages(
+  query: string = ''
+): Promise<number> {
+  const searchTerm = `%${query}%`;
+  const rows = await sql`
+    SELECT COUNT(*) FROM meetings
+    WHERE
+      presiding     ILIKE ${searchTerm}
+      OR conducting ILIKE ${searchTerm}
+      OR meeting_type ILIKE ${searchTerm}
+      OR speakers::text ILIKE ${searchTerm}
+  `;
+  return Math.ceil(Number(rows[0].count) / ITEMS_PER_PAGE);
 }
 
-export function getMeetingById(id: number): SacramentMeeting | null {
-  return meetings.find(m => m.id === id) ?? null;
+export async function getMeetingById(
+  id: number
+): Promise<SacramentMeeting | null> {
+  const rows = await sql`
+    SELECT
+      id,
+      to_char(date, 'YYYY-MM-DD') AS "date",
+      meeting_type                AS "meetingType",
+      presiding, conducting, announcements,
+      opening_hymn                AS "openingHymn",
+      opening_prayer              AS "openingPrayer",
+      ward_business               AS "wardBusiness",
+      stake_business              AS "stakeBusiness",
+      sacrament_hymn              AS "sacramentHymn",
+      speakers,
+      closing_hymn                AS "closingHymn",
+      closing_prayer              AS "closingPrayer"
+    FROM meetings WHERE id = ${id}
+  `;
+  return (rows[0] as unknown as SacramentMeeting) ?? null;
 }
+
+// Mutation stubs — will be wired to the database in Week 04
+export async function addMeeting(
+  data: Omit<SacramentMeeting, 'id'>
+): Promise<SacramentMeeting> {
+  throw new Error('addMeeting: database implementation coming in Week 04');
+}
+
+export async function updateMeeting(
+  id: number,
+  updates: Partial<SacramentMeeting>
+): Promise<SacramentMeeting | null> {
+  throw new Error('updateMeeting: database implementation coming in Week 04');
+}
+
+export async function deleteMeeting(id: number): Promise<boolean> {
+  throw new Error('deleteMeeting: database implementation coming in Week 04');
+}
+
+export async function getMeetingsByDate(
+  date: string
+): Promise<SacramentMeeting[]> {
+  const rows = await sql`
+    SELECT id
+    FROM meetings
+    WHERE date = ${date}::date
+  `;
+
+  if (rows.length === 0) return [];
+
+  const meeting = await getMeetingById(Number(rows[0].id));
+  return meeting ? [meeting] : [];
+}
+

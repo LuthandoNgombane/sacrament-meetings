@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getMeetings } from "@/lib/meetings-db";
+import { getMeetingsByDate } from "@/lib/meetings-db";
 
 // Calculate the current Sunday on each request.
 import { connection } from "next/server";
@@ -25,7 +25,8 @@ export default async function CurrentMeetingPage() {
   sunday.setUTCDate(sunday.getUTCDate() - sunday.getUTCDay());
 
   const sundayDate = sunday.toISOString().slice(0, 10);
-  const meeting = getMeetings(sundayDate)[0];
+  const meetings = await getMeetingsByDate(sundayDate);
+  const meeting = meetings[0];
 
   if (!meeting) {
     redirect("/meetings");
