@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { connection } from "next/server";
 import MeetingCard from "@/components/MeetingCard";
 import { getApiUrl } from "@/lib/api-url";
@@ -15,6 +16,13 @@ export default function MeetingsPage() {
         <p className="mt-2 text-slate-600">
           Select a meeting to view its full program.
         </p>
+
+        <Link
+          href="/meetings/new"
+          className="mt-4 inline-block rounded-md bg-blue-900 px-4 py-2 text-white hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-900"
+        >
+          Create Meeting
+        </Link>
       </div>
 
       <Suspense fallback={<p role="status">Loading meetings…</p>}>
